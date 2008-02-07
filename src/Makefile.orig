@@ -1,0 +1,82 @@
+#
+#	SimpleMan - Simple Download Manager
+#	Copyright (C) 2007 Roque Pinel, Rio de Janeiro
+#	Email simplemandownloader@gmail.com
+#
+#
+#	This program is free software; you can redistribute it and/or modify
+#	it under the terms of the GNU General Public License as published by
+#	the Free Software Foundation; either version 2 of the License, or
+#	(at your option) any later version.
+#
+#	This program is distributed in the hope that it will be useful,
+#	but WITHOUT ANY WARRANTY; without even the implied warranty of
+#	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#	GNU General Public License for more details.
+#
+#	You should have received a copy of the GNU General Public License
+#	along with this program; if not, write to the Free Software
+#	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+
+# Makefile for the Simple Manager project
+
+CC = g++
+CFLAGS = -Wall
+DEFS = -DENABLE_DBUS -DDEBUG
+LIBS_GTKMM   = `pkg-config gtkmm-2.4 --cflags --libs`
+LIBS_GTHREAD = `pkg-config gthread-2.0 --cflags --libs `
+LIBS_DBUS    = `pkg-config dbus-glib-1 dbus-1 --cflags --libs `
+
+SIMPLEMAN = simpleman
+OBJECTS = sm_util.o sm_msg.o sm_socket.o sm_ftp.o sm_http.o sm_net.o sm_model_c.o sm_model_r.o sm_model_l.o sm_pref.o sm_new.o sm_service.o sm_win.o sm_main.o
+
+all: $(OBJECTS)
+	$(CC) $(CFLAGS) -o $(SIMPLEMAN) $(OBJECTS) $(DEFS) $(LIBS_GTKMM) $(LIBS_GTHREAD) $(LIBS_DBUS)
+
+sm_util.o: sm_util.cpp
+	$(CC) $(CFLAGS) -c sm_util.cpp $(DEFS)
+
+sm_msg.o: sm_msg.cpp
+	$(CC) $(CFLAGS) -c sm_msg.cpp $(DEFS) $(LIBS_GTKMM) 
+
+sm_socket.o: sm_socket.cpp
+	$(CC) $(CFLAGS) -c sm_socket.cpp $(DEFS)
+
+sm_ftp.o: sm_ftp.cpp
+	$(CC) $(CFLAGS) -c sm_ftp.cpp $(DEFS) $(LIBS_GTHREAD)
+
+sm_http.o: sm_http.cpp
+	$(CC) $(CFLAGS) -c sm_http.cpp $(DEFS) $(LIBS_GTKMM) $(LIBS_GTHREAD)
+
+sm_net.o: sm_net.cpp
+	$(CC) $(CFLAGS) -c sm_net.cpp $(DEFS) $(LIBS_GTKMM) $(LIBS_GTHREAD)
+
+sm_model_c.o: sm_model_c.cpp
+	$(CC) $(CFLAGS) -c sm_model_c.cpp $(DEFS) $(LIBS_GTKMM)
+
+sm_model_r.o: sm_model_r.cpp
+	$(CC) $(CFLAGS) -c sm_model_r.cpp $(DEFS) $(LIBS_GTKMM)
+
+sm_model_l.o: sm_model_l.cpp
+	$(CC) $(CFLAGS) -c sm_model_l.cpp $(DEFS) $(LIBS_GTKMM)
+
+sm_pref.o: sm_pref.cpp
+	$(CC) $(CFLAGS) -c sm_pref.cpp $(DEFS) $(LIBS_GTKMM)
+
+sm_new.o: sm_new.cpp
+	$(CC) $(CFLAGS) -c sm_new.cpp $(DEFS) $(LIBS_GTKMM)
+
+sm_service.o: sm_service.cpp
+	$(CC) $(CFLAGS) -c sm_service.cpp $(DEFS) $(LIBS_GTKMM) $(LIBS_DBUS)
+
+sm_win.o: sm_win.cpp
+	$(CC) $(CFLAGS) -c sm_win.cpp $(DEFS) $(LIBS_GTKMM) $(LIBS_GTHREAD)
+
+sm_main.o: sm_main.cpp
+	$(CC) $(CFLAGS) -c sm_main.cpp $(DEFS) $(LIBS_GTKMM) $(LIBS_GTHREAD) $(LIBS_DBUS)
+
+clean:
+	rm -f $(OBJECTS) $(SIMPLEMAN)
+	
+# EOF

@@ -1,0 +1,109 @@
+#
+#	SimpleMan - Simple Download Manager
+#	Copyright (C) 2007 Roque Pinel, Rio de Janeiro
+#	Email simplemandownloader@gmail.com
+#
+#
+#	This program is free software; you can redistribute it and/or modify
+#	it under the terms of the GNU General Public License as published by
+#	the Free Software Foundation; either version 2 of the License, or
+#	(at your option) any later version.
+#
+#	This program is distributed in the hope that it will be useful,
+#	but WITHOUT ANY WARRANTY; without even the implied warranty of
+#	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#	GNU General Public License for more details.
+#
+#	You should have received a copy of the GNU General Public License
+#	along with this program; if not, write to the Free Software
+#	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+
+# configure.in for the Simple Manager project
+
+
+AC_PREREQ(2.61)
+AC_INIT(simpleman, 0.2, simplemandownloader@gmail.com)
+AM_INIT_AUTOMAKE
+AC_CONFIG_SRCDIR([src/sm_socket.h])
+AC_CONFIG_HEADER([config.h])
+
+# Checks for programs.
+
+AC_PROG_CXX
+AC_PROG_CC
+
+# Checks for enable options
+
+AC_ARG_ENABLE(degub, [  --enable-degub          degub output informations])
+
+if test "${enable_debug}" = "yes" ; then
+	AC_DEFINE(DEBUG, , [Debug output enabled])
+fi
+
+AC_ARG_ENABLE(dbus, [  --enable-dbus           dbus remote interface])
+
+# Checks for libraries.
+
+list_prereq_msg() {
+	echo ""
+	echo ""
+	echo "*** Be sure to install the following required packages ***"
+	echo "  pkg-config"
+	echo "  gtkmm"
+	echo "  glibmm"
+	echo "  dbus"
+	echo ""
+}
+
+list_prereq() {
+	list_prereq_msg
+	exit 1
+}
+
+dnl ==== Check for pkg-config ====
+AC_CHECK_TOOL(PKGCONFIG_PATH, pkg-config, MISSING)
+if test $PKGCONFIG_PATH = MISSING; then
+	AC_MSG_WARN([***pkg-config REQUIRED***, please install])
+	list_prereq
+fi
+
+GTKMM_MODULES="gtkmm-2.4"
+GTHREAD_MODULES="gthread-2.0"
+DBUS_GLIB_MODULES="dbus-glib-1"
+
+PKG_CHECK_MODULES(GTKMM, "$GTKMM_MODULES")
+AC_SUBST(GTKMM_CFLAGS)
+AC_SUBST(GTKMM_LIBS)
+
+PKG_CHECK_MODULES(GTHREAD, "$GTHREAD_MODULES")
+AC_SUBST(GTHREAD_CFLAGS)
+AC_SUBST(GTHREAD_LIBS)
+
+if test "${enable_dbus}" = "yes" ; then
+	PKG_CHECK_MODULES(DBUS_GLIB, "$DBUS_GLIB_MODULES")
+	AC_SUBST(DBUS_GLIB_CFLAGS)
+	AC_SUBST(DBUS_GLIB_LIBS)
+	AC_DEFINE(ENABLE_DBUS, , [DBus enabled])
+fi
+
+# Checks for header files.
+
+AC_HEADER_DIRENT
+AC_CHECK_HEADERS([arpa/inet.h fcntl.h netdb.h unistd.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+
+AC_HEADER_STDBOOL
+AC_C_CONST
+AC_HEADER_TIME
+
+# Checks for library functions.
+
+AC_FUNC_CLOSEDIR_VOID
+AC_HEADER_STDC
+AC_CHECK_FUNCS([gethostbyname memset mkdir socket])
+
+AC_CONFIG_FILES([Makefile
+                 src/Makefile])
+AC_OUTPUT
